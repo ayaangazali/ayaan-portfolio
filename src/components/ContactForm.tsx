@@ -1,141 +1,83 @@
 "use client";
-import { Check, ChevronRight, Loader2 } from "lucide-react";
+import { Mail } from "lucide-react";
 import React from "react";
-import { Label } from "./ui/label";
-import { Input } from "./ui/ace-input";
-import { Textarea } from "./ui/ace-textarea";
-import { cn } from "@/lib/utils";
-import { useToast } from "./ui/use-toast";
+import { config } from "@/data/config";
 import { Button } from "./ui/button";
-import { useRouter } from "next/navigation";
 
 const ContactForm = () => {
-  const [fullName, setFullName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [message, setMessage] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
-
-  const { toast } = useToast();
-  const router = useRouter();
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await fetch("/api/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullName,
-          email,
-          message,
-        }),
-      });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      toast({
-        title: "Thank you!",
-        description: "I'll get back to you as soon as possible.",
-        variant: "default",
-        className: cn("top-0 mx-auto flex fixed md:top-4 md:right-4"),
-      });
-      setLoading(false);
-      setFullName("");
-      setEmail("");
-      setMessage("");
-      const timer = setTimeout(() => {
-        router.push("/");
-        clearTimeout(timer);
-      }, 1000);
-    } catch (err) {
-      toast({
-        title: "Error",
-        description: "Something went wrong! Please check the fields.",
-        className: cn(
-          "top-0 w-full flex justify-center fixed md:max-w-7xl md:top-4 md:right-4"
-        ),
-        variant: "destructive",
-      });
-    }
-    setLoading(false);
+  const handleEmailClick = () => {
+    window.location.href = `mailto:${config.email}?subject=Portfolio Contact&body=Hi Ayaan,%0D%0A%0D%0A`;
   };
+
   return (
-    <form className="min-w-7xl mx-auto sm:mt-4" onSubmit={handleSubmit}>
-      <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
-        <LabelInputContainer>
-          <Label htmlFor="fullname">Full name</Label>
-          <Input
-            id="fullname"
-            placeholder="Your Name"
-            type="text"
-            required
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-          />
-        </LabelInputContainer>
-        <LabelInputContainer className="mb-4">
-          <Label htmlFor="email">Email Address</Label>
-          <Input
-            id="email"
-            placeholder="you@example.com"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </LabelInputContainer>
-      </div>
-      <div className="grid w-full gap-1.5 mb-4">
-        <Label htmlFor="content">Your Message</Label>
-        <Textarea
-          placeholder="Tell me about about your project,"
-          id="content"
-          required
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <p className="text-sm text-muted-foreground">
-          I&apos;ll never share your data with anyone else. Pinky promise!
+    <div className="min-w-7xl mx-auto sm:mt-4 space-y-6">
+      <div className="text-center space-y-4">
+        <p className="text-lg text-muted-foreground">
+          Let&apos;s connect! Feel free to reach out via email.
         </p>
+        
+        <div className="bg-secondary/50 border border-border rounded-lg p-6 space-y-4">
+          <div className="flex items-center justify-center gap-2">
+            <Mail className="w-5 h-5 text-primary" />
+            <a 
+              href={`mailto:${config.email}`}
+              className="text-lg font-medium text-primary hover:underline"
+            >
+              {config.email}
+            </a>
+          </div>
+          
+          <Button
+            onClick={handleEmailClick}
+            className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-12 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+          >
+            <div className="flex items-center justify-center gap-2">
+              <Mail className="w-4 h-4" />
+              Send Email
+            </div>
+            <BottomGradient />
+          </Button>
+        </div>
+
+        <div className="pt-4">
+          <p className="text-sm text-muted-foreground">
+            You can also find me on:
+          </p>
+          <div className="flex items-center justify-center gap-4 mt-3">
+            <a
+              href={config.social.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              LinkedIn
+            </a>
+            <span className="text-muted-foreground">•</span>
+            <a
+              href={config.social.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              GitHub
+            </a>
+            <span className="text-muted-foreground">•</span>
+            <a
+              href={config.social.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Twitter/X
+            </a>
+          </div>
+        </div>
       </div>
-      <Button
-        disabled={loading}
-        className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-        type="submit"
-      >
-        {loading ? (
-          <div className="flex items-center justify-center">
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            <p>Please wait</p>
-          </div>
-        ) : (
-          <div className="flex items-center justify-center">
-            Send Message <ChevronRight className="w-4 h-4 ml-4" />
-          </div>
-        )}
-        <BottomGradient />
-      </Button>
-    </form>
+    </div>
   );
 };
 
 export default ContactForm;
-
-const LabelInputContainer = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div className={cn("flex flex-col space-y-2 w-full", className)}>
-      {children}
-    </div>
-  );
-};
 
 const BottomGradient = () => {
   return (
